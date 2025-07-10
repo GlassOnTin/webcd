@@ -1,0 +1,35 @@
+[Unit]
+Description=WebCD - Web-based CD Player
+After=network.target
+
+[Service]
+Type=simple
+User=webcd
+Group=cdrom
+WorkingDirectory=/usr/share/webcd
+Environment="PATH=/usr/bin:/bin"
+ExecStart=/usr/bin/python3 /usr/share/webcd/app.py
+Restart=on-failure
+RestartSec=5
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/usr/share/webcd
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+# Device access
+DeviceAllow=/dev/cdrom rw
+DeviceAllow=/dev/sr0 rw
+PrivateDevices=false
+
+[Install]
+WantedBy=multi-user.target

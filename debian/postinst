@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+
+case "$1" in
+    configure)
+        # Create webcd system user if it doesn't exist
+        if ! getent passwd webcd > /dev/null; then
+            adduser --system --group --home /nonexistent --no-create-home \
+                --quiet --disabled-login --disabled-password \
+                --gecos "WebCD CD Player" webcd
+        fi
+        
+        # Add webcd user to cdrom group
+        if getent group cdrom > /dev/null; then
+            adduser webcd cdrom || true
+        fi
+        
+        # Set permissions on application directory
+        chown -R webcd:webcd /usr/share/webcd
+        chmod 755 /usr/share/webcd
+        
+        # Reload systemd
+        if [ -d /run/systemd/system ]; then
+            systemctl daemon-reload || true
+        fi
+        
+        echo "WebCD installed successfully!"
+        echo "To start the service: sudo systemctl start webcd"
+        echo "To enable on boot: sudo systemctl enable webcd"
+        echo "Access WebCD at: http://localhost:5000"
+        ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+        ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+        ;;
+esac
+
+#DEBHELPER#
+
+exit 0

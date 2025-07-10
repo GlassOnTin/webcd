@@ -23,3 +23,21 @@ Thumbs.db
 # Project specific
 *.log
 *.pid
+
+# Debian package build files
+debian/.debhelper/
+debian/files
+debian/*.debhelper
+debian/*.debhelper.log
+debian/*.substvars
+debian/webcd/
+build/
+dist/
+*.egg-info/
+
+# Built packages (in parent directory)
+../*.deb
+../*.changes
+../*.dsc
+../*.buildinfo
+../*.upload

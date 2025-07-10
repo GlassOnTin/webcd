@@ -1,0 +1,38 @@
+Source: webcd
+Section: sound
+Priority: optional
+Maintainer: GlassOnTin <glassontin@users.noreply.github.com>
+Build-Depends: debhelper-compat (= 13),
+               dh-python,
+               python3-all,
+               python3-setuptools
+Standards-Version: 4.6.2
+Homepage: https://github.com/GlassOnTin/webcd
+Vcs-Browser: https://github.com/GlassOnTin/webcd
+Vcs-Git: https://github.com/GlassOnTin/webcd.git
+Rules-Requires-Root: no
+
+Package: webcd
+Architecture: all
+Depends: ${python3:Depends},
+         ${misc:Depends},
+         python3-flask,
+         python3-flask-cors,
+         python3-musicbrainzngs,
+         python3-requests,
+         python3-dotenv,
+         ffmpeg,
+         cd-discid,
+         cdparanoia
+Recommends: python3-gunicorn
+Description: Web-based CD player with streaming support
+ WebCD is a web-based audio CD player that provides:
+ .
+  - Web interface for playing audio CDs
+  - Real-time MP3 streaming via FFmpeg
+  - GNUDB/CDDB support for album and track information
+  - MusicBrainz fallback for album lookup
+  - Manual album search functionality
+  - Configurable stream quality settings
+  - Systemd service support
+  - Mobile-friendly interface
