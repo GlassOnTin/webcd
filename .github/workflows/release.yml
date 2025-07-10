@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., 1.0.1)'
+        required: true
+        type: string
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Determine version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+        else
+          VERSION=${GITHUB_REF#refs/tags/v}
+        fi
+        echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
+        echo "Building version ${VERSION}"
+    
+    - name: Update version in files
+      run: |
+        VERSION=${{ steps.version.outputs.VERSION }}
+        # Update setup.py
+        sed -i "s/version='[^']*'/version='${VERSION}'/" setup.py
+        # Update Makefile
+        sed -i "s/VERSION := .*/VERSION := ${VERSION}/" Makefile
+        # Update debian/changelog
+        TIMESTAMP=$(date -R)
+        sed -i "1s/.*/webcd (${VERSION}-1) unstable; urgency=medium/" debian/changelog
+        sed -i "s/ -- .*/ -- GlassOnTin <glassontin@users.noreply.github.com>  ${TIMESTAMP}/" debian/changelog
+    
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          debhelper \
+          dh-python \
+          python3-all \
+          python3-setuptools \
+          devscripts \
+          lintian
+    
+    - name: Install Python dependencies
+      run: |
+        sudo apt-get install -y \
+          python3-flask \
+          python3-flask-cors \
+          python3-musicbrainzngs \
+          python3-requests \
+          python3-dotenv
+    
+    - name: Build Debian package
+      run: |
+        dpkg-buildpackage -us -uc -b
+        # Copy package to workspace
+        cp ../webcd_*.deb ./
+    
+    - name: Create checksums
+      run: |
+        sha256sum webcd_*.deb > webcd_${{ steps.version.outputs.VERSION }}-1_all.deb.sha256
+    
+    - name: Create Release Notes
+      id: release_notes
+      run: |
+        VERSION=${{ steps.version.outputs.VERSION }}
+        cat > release_notes.md << EOF
+        ## WebCD v${VERSION}
+        
+        ### Installation
+        
+        Download the \`.deb\` package and install with:
+        \`\`\`bash
+        sudo dpkg -i webcd_${VERSION}-1_all.deb
+        sudo apt-get install -f  # Install any missing dependencies
+        \`\`\`
+        
+        ### Usage
+        
+        After installation:
+        \`\`\`bash
+        # Start the service
+        sudo systemctl start webcd
+        
+        # Enable on boot
+        sudo systemctl enable webcd
+        
+        # Access WebCD at
+        http://localhost:5000
+        \`\`\`
+        
+        ### Changes
+        
+        See [CHANGELOG](https://github.com/GlassOnTin/webcd/blob/master/debian/changelog) for details.
+        
+        ### SHA256 Checksums
+        
+        \`\`\`
+        $(cat webcd_*.sha256)
+        \`\`\`
+        EOF
+    
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: v${{ steps.version.outputs.VERSION }}
+        name: WebCD v${{ steps.version.outputs.VERSION }}
+        body_path: release_notes.md
+        draft: false
+        prerelease: false
+        files: |
+          webcd_*.deb
+          webcd_*.deb.sha256
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

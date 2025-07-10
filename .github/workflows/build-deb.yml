@@ -1,0 +1,59 @@
+name: Build Debian Package
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install build dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          debhelper \
+          dh-python \
+          python3-all \
+          python3-setuptools \
+          devscripts \
+          lintian
+    
+    - name: Install Python dependencies
+      run: |
+        sudo apt-get install -y \
+          python3-flask \
+          python3-flask-cors \
+          python3-musicbrainzngs \
+          python3-requests \
+          python3-dotenv
+    
+    - name: Build Debian package
+      run: |
+        dpkg-buildpackage -us -uc -b
+    
+    - name: Run lintian
+      run: |
+        lintian ../webcd_*.deb || true
+    
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: debian-package
+        path: |
+          ../webcd_*.deb
+          ../webcd_*.changes
+          ../webcd_*.buildinfo
+        retention-days: 7
+    
+    - name: Display package info
+      run: |
+        echo "Package built successfully!"
+        dpkg-deb -I ../webcd_*.deb
+        dpkg-deb -c ../webcd_*.deb

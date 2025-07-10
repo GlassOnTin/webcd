@@ -1,5 +1,8 @@
 # WebCD - Web-based CD Player
 
+[![Build Debian Package](https://github.com/GlassOnTin/webcd/actions/workflows/build-deb.yml/badge.svg)](https://github.com/GlassOnTin/webcd/actions/workflows/build-deb.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/GlassOnTin/webcd)](https://github.com/GlassOnTin/webcd/releases)
+
 A web interface for playing audio CDs using FFmpeg streaming.
 
 ## Features
@@ -20,9 +23,27 @@ A web interface for playing audio CDs using FFmpeg streaming.
 
 ## Installation
 
+### Option 1: Install from Debian Package (Recommended)
+
+Download the latest `.deb` package from the [Releases page](https://github.com/GlassOnTin/webcd/releases) and install:
+
+```bash
+sudo dpkg -i webcd_*.deb
+sudo apt-get install -f  # Install any missing dependencies
+```
+
+Then start the service:
+```bash
+sudo systemctl start webcd
+sudo systemctl enable webcd  # Optional: start on boot
+```
+
+### Option 2: Install from Source
+
 1. Clone the repository:
 ```bash
-cd ~/Code/webcd
+git clone https://github.com/GlassOnTin/webcd.git
+cd webcd
 ```
 
 2. Create and activate virtual environment:
@@ -37,6 +58,22 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+
+### With Debian Package
+
+If installed via the Debian package, WebCD runs as a system service:
+
+```bash
+# Check service status
+sudo systemctl status webcd
+
+# View logs
+sudo journalctl -u webcd -f
+```
+
+Access the web interface at: http://localhost:5000
+
+### With Source Installation
 
 1. Insert an audio CD into your CD-ROM drive
 
