@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebCD Player</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>WebCD Player</h1>
+        
+        <div class="player-card">
+            <div class="cd-status">
+                <div id="cd-info" class="cd-info">
+                    <p>No CD detected</p>
+                </div>
+                <div id="album-info" class="album-info" style="display: none;">
+                    <h2 id="album-title">Unknown Album</h2>
+                    <p id="album-artist">Unknown Artist</p>
+                    <p id="album-year"></p>
+                </div>
+                <div class="cd-controls">
+                    <button id="refresh-cd" class="btn btn-secondary">Refresh CD Info</button>
+                    <button id="search-album" class="btn btn-secondary" style="display: none;">Search Album</button>
+                </div>
+            </div>
+            
+            <div class="track-list" id="track-list">
+                <!-- Tracks will be populated here -->
+            </div>
+            
+            <div class="now-playing">
+                <h3>Now Playing</h3>
+                <p id="current-track">No track selected</p>
+                <audio id="audio-player" controls></audio>
+            </div>
+            
+            <div class="controls">
+                <button id="prev-btn" class="btn btn-control">⏮ Previous</button>
+                <button id="play-btn" class="btn btn-control btn-primary">▶ Play</button>
+                <button id="stop-btn" class="btn btn-control">⏹ Stop</button>
+                <button id="next-btn" class="btn btn-control">⏭ Next</button>
+            </div>
+        </div>
+        
+        <div class="settings-panel">
+            <button id="toggle-settings" class="btn btn-secondary">⚙ Stream Settings</button>
+            <div id="settings-content" class="settings-content" style="display: none;">
+                <h3>Stream Quality Settings</h3>
+                
+                <div class="setting-group">
+                    <label for="bitrate">Bitrate:</label>
+                    <select id="bitrate" class="setting-select">
+                        <option value="32k">32 kbps (Low)</option>
+                        <option value="64k">64 kbps</option>
+                        <option value="96k">96 kbps</option>
+                        <option value="128k" selected>128 kbps (Default)</option>
+                        <option value="192k">192 kbps</option>
+                        <option value="256k">256 kbps</option>
+                        <option value="320k">320 kbps (High)</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="buffer-size">Buffer Size:</label>
+                    <select id="buffer-size" class="setting-select">
+                        <option value="64k">64 KB (Low latency)</option>
+                        <option value="128k">128 KB</option>
+                        <option value="256k" selected>256 KB (Default)</option>
+                        <option value="512k">512 KB</option>
+                        <option value="1024k">1 MB (High stability)</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="paranoia-mode">Read Mode:</label>
+                    <select id="paranoia-mode" class="setting-select">
+                        <option value="fast" selected>Fast (May skip on errors)</option>
+                        <option value="normal">Normal (Balanced)</option>
+                        <option value="paranoid">Paranoid (Best quality, slow)</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="preload-seconds">Preload Time:</label>
+                    <input type="range" id="preload-seconds" min="0" max="10" value="2" step="1">
+                    <span id="preload-value">2s</span>
+                </div>
+                
+                <button id="apply-settings" class="btn btn-primary">Apply Settings</button>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <span id="status-text">Ready</span>
+        </div>
+    </div>
+    
+    <!-- Album Search Modal -->
+    <div id="album-search-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Search for Album</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="album-search-input" placeholder="Enter artist or album name..." class="search-input">
+                <button id="search-button" class="btn btn-primary">Search</button>
+                <div id="search-results" class="search-results"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/player.js') }}"></script>
+</body>
+</html>

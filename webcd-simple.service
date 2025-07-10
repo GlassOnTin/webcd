@@ -1,0 +1,14 @@
+[Unit]
+Description=WebCD - Web-based CD Player
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Code/webcd
+Environment="PATH=%h/Code/webcd/venv/bin:/usr/local/bin:/usr/bin:/bin"
+ExecStart=%h/Code/webcd/venv/bin/python %h/Code/webcd/app.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target
