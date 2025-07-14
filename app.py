@@ -27,6 +27,7 @@ class CDPlayer:
         self.cd_device = None
         # Default streaming settings
         self.stream_settings = {
+            'format': 'mp3',  # 'mp3', 'flac', 'wav'
             'bitrate': '192k',
             'buffer_size': '256k',
             'paranoia_mode': 'fast',  # 'fast', 'normal', 'paranoid'
@@ -751,8 +752,14 @@ def stream_settings():
         data = request.json
         if data:
             # Update settings with validation
+            if 'format' in data:
+                # Validate format
+                fmt = data['format']
+                if fmt in ['mp3', 'flac', 'wav']:
+                    player.stream_settings['format'] = fmt
+            
             if 'bitrate' in data:
-                # Validate bitrate (32k-320k)
+                # Validate bitrate (32k-320k) - only for MP3
                 bitrate = data['bitrate']
                 if bitrate in ['32k', '64k', '96k', '128k', '192k', '256k', '320k']:
                     player.stream_settings['bitrate'] = bitrate
@@ -824,6 +831,16 @@ def debug_cd():
 def stream_track(track):
     """Stream audio data for a specific track"""
     
+    # Determine MIME type based on format
+    format_to_mime = {
+        'mp3': 'audio/mpeg',
+        'flac': 'audio/flac',
+        'wav': 'audio/wav'
+    }
+    
+    selected_format = player.stream_settings.get('format', 'mp3')
+    mime_type = format_to_mime.get(selected_format, 'audio/mpeg')
+    
     # Add cache headers for better mobile performance
     def generate():
         # For CD audio, we need to specify the track differently
@@ -844,22 +861,39 @@ def stream_track(track):
             
             cmd.extend([str(track), '-'])  # track number and output to stdout
             
-            # Pipe cdparanoia output to ffmpeg for MP3 encoding
+            # Pipe cdparanoia output to ffmpeg for encoding
             cdp_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL)
             
+            # Build FFmpeg command based on selected format
             ffmpeg_cmd = [
                 'ffmpeg',
                 '-f', 's16le',  # raw PCM input
                 '-ar', '44100',  # sample rate
                 '-ac', '2',  # stereo
                 '-i', '-',  # input from stdin
-                '-acodec', 'mp3',
-                '-ab', player.stream_settings['bitrate'],
-                '-bufsize', player.stream_settings['buffer_size'],
-                '-maxrate', player.stream_settings['bitrate'],
-                '-f', 'mp3',
-                '-'  # output to stdout
             ]
+            
+            if selected_format == 'mp3':
+                ffmpeg_cmd.extend([
+                    '-acodec', 'mp3',
+                    '-ab', player.stream_settings['bitrate'],
+                    '-bufsize', player.stream_settings['buffer_size'],
+                    '-maxrate', player.stream_settings['bitrate'],
+                    '-f', 'mp3'
+                ])
+            elif selected_format == 'flac':
+                ffmpeg_cmd.extend([
+                    '-acodec', 'flac',
+                    '-compression_level', '5',  # 0-12, 5 is default
+                    '-f', 'flac'
+                ])
+            elif selected_format == 'wav':
+                ffmpeg_cmd.extend([
+                    '-acodec', 'pcm_s16le',
+                    '-f', 'wav'
+                ])
+            
+            ffmpeg_cmd.append('-')  # output to stdout
             
             ffmpeg_process = subprocess.Popen(
                 ffmpeg_cmd, 
@@ -889,11 +923,27 @@ def stream_track(track):
                 '-f', 'libcdio',
                 '-i', player.cd_device,
                 '-map', f'0:a:{track-1}',  # Map audio track (0-indexed)
-                '-acodec', 'mp3',
-                '-ab', '192k',
-                '-f', 'mp3',
-                '-'
             ]
+            
+            if selected_format == 'mp3':
+                cmd.extend([
+                    '-acodec', 'mp3',
+                    '-ab', player.stream_settings.get('bitrate', '192k'),
+                    '-f', 'mp3'
+                ])
+            elif selected_format == 'flac':
+                cmd.extend([
+                    '-acodec', 'flac',
+                    '-compression_level', '5',
+                    '-f', 'flac'
+                ])
+            elif selected_format == 'wav':
+                cmd.extend([
+                    '-acodec', 'pcm_s16le',
+                    '-f', 'wav'
+                ])
+            
+            cmd.append('-')
             
             process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
@@ -906,7 +956,7 @@ def stream_track(track):
             finally:
                 process.terminate()
     
-    response = Response(generate(), mimetype='audio/mpeg')
+    response = Response(generate(), mimetype=mime_type)
     # Add headers for better mobile streaming
     response.headers['Accept-Ranges'] = 'none'  # We don't support range requests yet
     response.headers['Cache-Control'] = 'no-cache'

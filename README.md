@@ -10,12 +10,17 @@ A web interface for playing audio CDs using FFmpeg streaming.
 - Web-based CD player interface
 - Track listing and navigation
 - Real-time audio streaming using FFmpeg
+- Multiple audio format support:
+  - MP3 (32-320 kbps) - compressed, bandwidth-efficient
+  - FLAC - lossless compression (~850 kbps)
+  - WAV - uncompressed, original CD quality (~1411 kbps)
 - Play/Pause/Stop controls
 - Previous/Next track navigation
 - Eject CD functionality
 - Automatic track progression
 - Multi-device support (multiple CD/DVD drives)
 - Automatic device detection
+- Album metadata lookup (GNUDB/MusicBrainz)
 - Responsive design
 
 ## Requirements
@@ -116,7 +121,15 @@ The application will automatically detect devices at:
 
 ### Stream Quality Settings
 
-Configure streaming quality through the web interface settings panel.
+Configure streaming quality through the web interface settings panel:
+
+- **Audio Format**: Choose between MP3, FLAC, or WAV
+- **Bitrate** (MP3 only): 32-320 kbps
+- **Buffer Size**: Adjust for network conditions
+- **Read Mode**: Fast/Normal/Paranoid (affects error correction)
+- **Preload Time**: Buffer before playback starts
+
+Settings are automatically saved and persist between sessions.
 
 ## Troubleshooting
 

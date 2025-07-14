@@ -38,6 +38,17 @@ class WebCDPlayer {
             document.getElementById('preload-value').textContent = e.target.value + 's';
         });
         
+        // Format change event
+        document.getElementById('format').addEventListener('change', (e) => {
+            // Show/hide bitrate option based on format
+            const bitrateGroup = document.getElementById('bitrate-group');
+            if (e.target.value === 'mp3') {
+                bitrateGroup.style.display = 'block';
+            } else {
+                bitrateGroup.style.display = 'none';
+            }
+        });
+        
         // Album search events
         document.getElementById('search-album').addEventListener('click', () => this.openAlbumSearch());
         document.querySelector('.close').addEventListener('click', () => this.closeAlbumSearch());
@@ -301,6 +312,16 @@ class WebCDPlayer {
     }
     
     updateSettingsUI() {
+        if (this.streamSettings.format) {
+            document.getElementById('format').value = this.streamSettings.format;
+            // Show/hide bitrate based on format
+            const bitrateGroup = document.getElementById('bitrate-group');
+            if (this.streamSettings.format === 'mp3') {
+                bitrateGroup.style.display = 'block';
+            } else {
+                bitrateGroup.style.display = 'none';
+            }
+        }
         if (this.streamSettings.bitrate) {
             document.getElementById('bitrate').value = this.streamSettings.bitrate;
         }
@@ -318,6 +339,7 @@ class WebCDPlayer {
     
     async applySettings() {
         const settings = {
+            format: document.getElementById('format').value,
             bitrate: document.getElementById('bitrate').value,
             buffer_size: document.getElementById('buffer-size').value,
             paranoia_mode: document.getElementById('paranoia-mode').value,

@@ -52,7 +52,16 @@
                 <h3>Stream Quality Settings</h3>
                 
                 <div class="setting-group">
-                    <label for="bitrate">Bitrate:</label>
+                    <label for="format">Audio Format:</label>
+                    <select id="format" class="setting-select">
+                        <option value="mp3" selected>MP3 (Compressed)</option>
+                        <option value="flac">FLAC (Lossless)</option>
+                        <option value="wav">WAV (Uncompressed)</option>
+                    </select>
+                </div>
+                
+                <div class="setting-group" id="bitrate-group">
+                    <label for="bitrate">Bitrate (MP3 only):</label>
                     <select id="bitrate" class="setting-select">
                         <option value="32k">32 kbps (Low)</option>
                         <option value="64k">64 kbps</option>
