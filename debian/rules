@@ -14,17 +14,11 @@ override_dh_auto_install:
 	mkdir -p debian/webcd/usr/share/webcd/static/js
 	mkdir -p debian/webcd/usr/share/webcd/templates
 	mkdir -p debian/webcd/usr/bin
-	mkdir -p debian/webcd/lib/systemd/system
-	mkdir -p debian/webcd/lib/systemd/user
 	
 	# Install application files
 	cp app.py debian/webcd/usr/share/webcd/
 	cp -r static/* debian/webcd/usr/share/webcd/static/
 	cp -r templates/* debian/webcd/usr/share/webcd/templates/
-	
-	# Install systemd service files
-	cp webcd.service debian/webcd/lib/systemd/system/webcd.service
-	cp webcd-simple.service debian/webcd/lib/systemd/user/webcd.service
 	
 	# Create wrapper script
 	echo '#!/bin/sh' > debian/webcd/usr/bin/webcd
@@ -32,7 +26,7 @@ override_dh_auto_install:
 	chmod +x debian/webcd/usr/bin/webcd
 
 override_dh_installsystemd:
-	dh_installsystemd --name=webcd --no-enable --no-start
+	dh_installsystemd --no-enable --no-start
 
 override_dh_python3:
 	dh_python3 --shebang=/usr/bin/python3
