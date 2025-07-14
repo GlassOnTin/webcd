@@ -10,24 +10,35 @@ case "$1" in
                 --gecos "WebCD CD Player" webcd
         fi
         
-        # Add webcd user to cdrom group
+        # Add webcd user to cdrom and audio groups
         if getent group cdrom > /dev/null; then
             adduser webcd cdrom || true
+        fi
+        if getent group audio > /dev/null; then
+            adduser webcd audio || true
         fi
         
         # Set permissions on application directory
         chown -R webcd:webcd /usr/share/webcd
         chmod 755 /usr/share/webcd
         
-        # Reload systemd
+        # Reload systemd and enable service
         if [ -d /run/systemd/system ]; then
             systemctl daemon-reload || true
+            # Enable the service to start on boot
+            systemctl enable webcd.service || true
+            # Start the service
+            systemctl start webcd.service || true
         fi
         
         echo "WebCD installed successfully!"
-        echo "To start the service: sudo systemctl start webcd"
-        echo "To enable on boot: sudo systemctl enable webcd"
+        echo "Service has been started and enabled."
         echo "Access WebCD at: http://localhost:5000"
+        echo ""
+        echo "Useful commands:"
+        echo "  systemctl status webcd    # Check service status"
+        echo "  systemctl restart webcd   # Restart service"
+        echo "  journalctl -u webcd -f    # View logs"
         ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

@@ -40,13 +40,37 @@ sudo dpkg -i webcd_*.deb
 sudo apt-get install -f  # Install any missing dependencies
 ```
 
-Then start the service:
+The service will start automatically after installation. You can manage it with:
 ```bash
-sudo systemctl start webcd
-sudo systemctl enable webcd  # Optional: start on boot
+sudo systemctl status webcd   # Check service status
+sudo systemctl restart webcd  # Restart service
+sudo systemctl stop webcd     # Stop service
+sudo journalctl -u webcd -f   # View logs
 ```
 
-### Option 2: Install from Source
+### Option 2: Install as Systemd Service (From Source)
+
+Clone the repository and use the installation script:
+
+```bash
+git clone https://github.com/GlassOnTin/webcd.git
+cd webcd
+sudo ./install-service.sh
+```
+
+The script will:
+- Create a system user for WebCD
+- Install the application to `/opt/webcd`
+- Set up a Python virtual environment
+- Install all dependencies
+- Configure and start the systemd service
+
+To uninstall:
+```bash
+sudo ./install-service.sh --uninstall
+```
+
+### Option 3: Manual Installation
 
 1. Clone the repository:
 ```bash
@@ -67,9 +91,9 @@ pip install -r requirements.txt
 
 ## Usage
 
-### With Debian Package
+### With Debian Package or Systemd Service
 
-If installed via the Debian package, WebCD runs as a system service:
+If installed via the Debian package or systemd installation script, WebCD runs as a system service:
 
 ```bash
 # Check service status
@@ -81,7 +105,7 @@ sudo journalctl -u webcd -f
 
 Access the web interface at: http://localhost:5000
 
-### With Source Installation
+### With Manual Installation
 
 1. Insert an audio CD into your CD-ROM drive
 
@@ -113,6 +137,11 @@ WebCD automatically detects available CD/DVD devices on your system. You can:
    ```
    Environment="WEBCD_DEVICE=/dev/sr0"
    ```
+   Then reload and restart:
+   ```bash
+   sudo systemctl daemon-reload
+   sudo systemctl restart webcd
+   ```
 
 The application will automatically detect devices at:
 - `/dev/cdrom` (default symlink)
@@ -130,6 +159,32 @@ Configure streaming quality through the web interface settings panel:
 - **Preload Time**: Buffer before playback starts
 
 Settings are automatically saved and persist between sessions.
+
+### Systemd Service Customization
+
+For advanced users who want to customize the systemd service:
+
+1. **Change listening port**: Edit the service file and add:
+   ```
+   Environment="FLASK_RUN_PORT=8080"
+   ```
+
+2. **Adjust resource limits**:
+   ```
+   MemoryLimit=1G
+   CPUQuota=80%
+   ```
+
+3. **Custom installation path** (for manual installations):
+   ```bash
+   sudo ./install-service.sh --install-dir /path/to/webcd --user myuser
+   ```
+
+After any changes to the service file:
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart webcd
+```
 
 ## Troubleshooting
 

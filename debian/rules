@@ -26,7 +26,7 @@ override_dh_auto_install:
 	chmod +x debian/webcd/usr/bin/webcd
 
 override_dh_installsystemd:
-	dh_installsystemd --no-enable --no-start
+	dh_installsystemd --name=webcd
 
 override_dh_python3:
 	dh_python3 --shebang=/usr/bin/python3
