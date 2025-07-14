@@ -38,23 +38,25 @@ jobs:
     - name: Build Debian package
       run: |
         dpkg-buildpackage -us -uc -b
+        # Move build artifacts to current directory
+        mv ../webcd_*.deb ../webcd_*.changes ../webcd_*.buildinfo . || true
     
     - name: Run lintian
       run: |
-        lintian ../webcd_*.deb || true
+        lintian webcd_*.deb || true
     
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
         name: debian-package
         path: |
-          ../webcd_*.deb
-          ../webcd_*.changes
-          ../webcd_*.buildinfo
+          webcd_*.deb
+          webcd_*.changes
+          webcd_*.buildinfo
         retention-days: 7
     
     - name: Display package info
       run: |
         echo "Package built successfully!"
-        dpkg-deb -I ../webcd_*.deb
-        dpkg-deb -c ../webcd_*.deb
+        dpkg-deb -I webcd_*.deb
+        dpkg-deb -c webcd_*.deb
