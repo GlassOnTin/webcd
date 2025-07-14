@@ -1,7 +1,7 @@
 # WebCD - Web-based CD Player
 
 [![Build Debian Package](https://github.com/GlassOnTin/webcd/actions/workflows/build-deb.yml/badge.svg)](https://github.com/GlassOnTin/webcd/actions/workflows/build-deb.yml)
-[![GitHub Release](https://img.shields.io/github/v/release/GlassOnTin/webcd)](https://github.com/GlassOnTin/webcd/releases)
+[![GitHub Release](https://img.shields.io/github/release/GlassOnTin/webcd.svg)](https://github.com/GlassOnTin/webcd/releases)
 
 A web interface for playing audio CDs using FFmpeg streaming.
 
