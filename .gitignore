@@ -31,6 +31,8 @@ debian/*.debhelper
 debian/*.debhelper.log
 debian/*.substvars
 debian/webcd/
+debian/debhelper-build-stamp
+.pybuild/
 build/
 dist/
 *.egg-info/
