@@ -12,7 +12,10 @@ A web interface for playing audio CDs using FFmpeg streaming.
 - Real-time audio streaming using FFmpeg
 - Play/Pause/Stop controls
 - Previous/Next track navigation
+- Eject CD functionality
 - Automatic track progression
+- Multi-device support (multiple CD/DVD drives)
+- Automatic device detection
 - Responsive design
 
 ## Requirements
@@ -91,9 +94,29 @@ python app.py
 
 ## Configuration
 
-- Default CD device: `/dev/cdrom`
-- To use a different device, edit `self.cd_device` in `app.py`
-- For `/dev/sr0`, change line 16 to: `self.cd_device = "/dev/sr0"`
+### CD/DVD Device Selection
+
+WebCD automatically detects available CD/DVD devices on your system. You can:
+
+1. **Use the Web Interface**: Click "Select Device" to choose from available devices
+2. **Set Environment Variable**: 
+   ```bash
+   export WEBCD_DEVICE=/dev/sr0
+   python app.py
+   ```
+3. **For systemd service**: Edit `/etc/systemd/system/webcd.service` and add:
+   ```
+   Environment="WEBCD_DEVICE=/dev/sr0"
+   ```
+
+The application will automatically detect devices at:
+- `/dev/cdrom` (default symlink)
+- `/dev/dvd` 
+- `/dev/sr0`, `/dev/sr1`, `/dev/sr2` (SCSI/SATA devices)
+
+### Stream Quality Settings
+
+Configure streaming quality through the web interface settings panel.
 
 ## Troubleshooting
 

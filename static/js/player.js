@@ -7,8 +7,16 @@ class WebCDPlayer {
         this.streamSettings = {};
         
         this.initializeEventListeners();
-        this.loadSettings();
-        this.refreshCDInfo();
+        this.initialize();
+    }
+    
+    async initialize() {
+        // Load settings first, then refresh CD info
+        console.log('Initializing WebCD player...');
+        await this.loadSettings();
+        console.log('Settings loaded, refreshing CD info...');
+        await this.refreshCDInfo();
+        console.log('Initialization complete');
     }
     
     initializeEventListeners() {
@@ -17,6 +25,7 @@ class WebCDPlayer {
         document.getElementById('stop-btn').addEventListener('click', () => this.stop());
         document.getElementById('next-btn').addEventListener('click', () => this.nextTrack());
         document.getElementById('prev-btn').addEventListener('click', () => this.previousTrack());
+        document.getElementById('eject-btn').addEventListener('click', () => this.ejectCD());
         
         // Audio player events
         this.audioPlayer.addEventListener('ended', () => this.nextTrack());
@@ -36,14 +45,21 @@ class WebCDPlayer {
         document.getElementById('album-search-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') this.searchAlbums();
         });
+        
+        // Device selector events
+        document.getElementById('device-selector-btn').addEventListener('click', () => this.openDeviceSelector());
+        document.querySelector('.close-device').addEventListener('click', () => this.closeDeviceSelector());
+        document.getElementById('refresh-devices').addEventListener('click', () => this.loadDevices());
     }
     
     async refreshCDInfo() {
+        console.log('refreshCDInfo called');
         this.updateStatus('Checking CD...');
         
         try {
             const response = await fetch('/api/cd-info');
             const data = await response.json();
+            console.log('CD info response:', data);
             
             if (data.success) {
                 this.tracks = data.tracks;
@@ -191,6 +207,38 @@ class WebCDPlayer {
             await this.playTrack(this.currentTrack - 1);
         } else {
             this.updateStatus('Already at first track');
+        }
+    }
+    
+    async ejectCD() {
+        this.updateStatus('Ejecting CD...');
+        
+        try {
+            const response = await fetch('/api/eject', {
+                method: 'POST'
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                // Stop audio if playing
+                this.stop();
+                
+                // Clear track list and album info
+                this.tracks = [];
+                document.getElementById('track-list').innerHTML = '';
+                document.getElementById('cd-info').style.display = 'block';
+                document.getElementById('cd-info').innerHTML = '<p>CD ejected</p>';
+                document.getElementById('album-info').style.display = 'none';
+                document.getElementById('search-album').style.display = 'none';
+                document.getElementById('current-track').textContent = 'No track selected';
+                
+                this.updateStatus('CD ejected successfully');
+            } else {
+                this.updateStatus('Error: ' + (data.error || 'Failed to eject CD'));
+            }
+        } catch (error) {
+            console.error('Eject error:', error);
+            this.updateStatus('Error: ' + error.message);
         }
     }
     
@@ -384,6 +432,93 @@ class WebCDPlayer {
         } catch (error) {
             console.error('Error setting album:', error);
             this.updateStatus('Error setting album');
+        }
+    }
+    
+    // Device selector methods
+    openDeviceSelector() {
+        document.getElementById('device-selector-modal').style.display = 'flex';
+        this.loadDevices();
+    }
+    
+    closeDeviceSelector() {
+        document.getElementById('device-selector-modal').style.display = 'none';
+    }
+    
+    async loadDevices() {
+        this.updateStatus('Loading device list...');
+        
+        try {
+            const response = await fetch('/api/devices');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.displayDevices(data.devices, data.current_device);
+                this.updateStatus('Device list loaded');
+            } else {
+                this.updateStatus('Error loading devices');
+            }
+        } catch (error) {
+            console.error('Error loading devices:', error);
+            this.updateStatus('Error loading devices');
+        }
+    }
+    
+    displayDevices(devices, currentDevice) {
+        const deviceList = document.getElementById('device-list');
+        deviceList.innerHTML = '';
+        
+        if (devices.length === 0) {
+            deviceList.innerHTML = '<p>No CD/DVD devices found</p>';
+            return;
+        }
+        
+        devices.forEach(device => {
+            const deviceItem = document.createElement('div');
+            deviceItem.className = 'device-item';
+            if (device.device === currentDevice) {
+                deviceItem.classList.add('active');
+            }
+            
+            const mediaStatus = device.has_media ? 
+                '<span class="has-media">CD present</span>' : 
+                '<span class="no-media">No CD</span>';
+            
+            deviceItem.innerHTML = `
+                <h4>${device.device}</h4>
+                <p>${device.model}</p>
+                <p class="device-status">Real path: ${device.real_path}</p>
+                <p class="device-status">Status: ${mediaStatus}</p>
+            `;
+            
+            deviceItem.addEventListener('click', () => this.selectDevice(device.device));
+            deviceList.appendChild(deviceItem);
+        });
+    }
+    
+    async selectDevice(devicePath) {
+        this.updateStatus(`Switching to ${devicePath}...`);
+        
+        try {
+            const response = await fetch('/api/set-device', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ device: devicePath })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.updateStatus(`Switched to ${devicePath}`);
+                this.closeDeviceSelector();
+                // Refresh CD info with new device
+                this.refreshCDInfo();
+            } else {
+                this.updateStatus('Error: ' + (data.error || 'Failed to switch device'));
+            }
+        } catch (error) {
+            console.error('Error switching device:', error);
+            this.updateStatus('Error switching device');
         }
     }
 }

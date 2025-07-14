@@ -23,6 +23,7 @@
                 <div class="cd-controls">
                     <button id="refresh-cd" class="btn btn-secondary">Refresh CD Info</button>
                     <button id="search-album" class="btn btn-secondary" style="display: none;">Search Album</button>
+                    <button id="device-selector-btn" class="btn btn-secondary">Select Device</button>
                 </div>
             </div>
             
@@ -41,6 +42,7 @@
                 <button id="play-btn" class="btn btn-control btn-primary">▶ Play</button>
                 <button id="stop-btn" class="btn btn-control">⏹ Stop</button>
                 <button id="next-btn" class="btn btn-control">⏭ Next</button>
+                <button id="eject-btn" class="btn btn-control">⏏ Eject</button>
             </div>
         </div>
         
@@ -55,8 +57,8 @@
                         <option value="32k">32 kbps (Low)</option>
                         <option value="64k">64 kbps</option>
                         <option value="96k">96 kbps</option>
-                        <option value="128k" selected>128 kbps (Default)</option>
-                        <option value="192k">192 kbps</option>
+                        <option value="128k">128 kbps</option>
+                        <option value="192k" selected>192 kbps (Default)</option>
                         <option value="256k">256 kbps</option>
                         <option value="320k">320 kbps (High)</option>
                     </select>
@@ -84,8 +86,8 @@
                 
                 <div class="setting-group">
                     <label for="preload-seconds">Preload Time:</label>
-                    <input type="range" id="preload-seconds" min="0" max="10" value="2" step="1">
-                    <span id="preload-value">2s</span>
+                    <input type="range" id="preload-seconds" min="0" max="10" value="1" step="1">
+                    <span id="preload-value">1s</span>
                 </div>
                 
                 <button id="apply-settings" class="btn btn-primary">Apply Settings</button>
@@ -108,6 +110,22 @@
                 <input type="text" id="album-search-input" placeholder="Enter artist or album name..." class="search-input">
                 <button id="search-button" class="btn btn-primary">Search</button>
                 <div id="search-results" class="search-results"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Device Selector Modal -->
+    <div id="device-selector-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Select CD/DVD Device</h2>
+                <span class="close-device">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="device-list" class="device-list">
+                    <!-- Devices will be populated here -->
+                </div>
+                <button id="refresh-devices" class="btn btn-secondary">Refresh Device List</button>
             </div>
         </div>
     </div>

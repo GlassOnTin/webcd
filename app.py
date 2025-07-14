@@ -23,21 +23,135 @@ class CDPlayer:
         self.is_playing = False
         self.current_track = 1
         self.track_info = []
-        self.cd_device = "/dev/cdrom"
+        self.available_devices = []
+        self.cd_device = None
         # Default streaming settings
         self.stream_settings = {
-            'bitrate': '128k',
+            'bitrate': '192k',
             'buffer_size': '256k',
             'paranoia_mode': 'fast',  # 'fast', 'normal', 'paranoid'
-            'preload_seconds': 2
+            'preload_seconds': 1
         }
         self.album_info = None
+        # Detect CD devices on initialization
+        self.detect_cd_devices()
+        
+        # Check for environment variable override
+        env_device = os.environ.get('WEBCD_DEVICE')
+        if env_device and os.path.exists(env_device):
+            self.cd_device = env_device
+        elif self.available_devices and not self.cd_device:
+            # Use first available device if no environment override
+            self.cd_device = self.available_devices[0]['device']
+    
+    def detect_cd_devices(self):
+        """Detect available CD/DVD devices on the system"""
+        self.available_devices = []
+        
+        # Method 1: Check common device paths
+        common_devices = ['/dev/cdrom', '/dev/dvd', '/dev/sr0', '/dev/sr1', '/dev/sr2']
+        for device in common_devices:
+            if os.path.exists(device):
+                # Try to get device info
+                device_info = self.get_device_info(device)
+                if device_info:
+                    self.available_devices.append(device_info)
+        
+        # Method 2: Check /sys/block for sr* devices
+        try:
+            for device in os.listdir('/sys/block'):
+                if device.startswith('sr'):
+                    device_path = f'/dev/{device}'
+                    if os.path.exists(device_path):
+                        device_info = self.get_device_info(device_path)
+                        if device_info and not any(d['device'] == device_path for d in self.available_devices):
+                            self.available_devices.append(device_info)
+        except:
+            pass
+        
+        # Remove duplicates based on real path
+        unique_devices = {}
+        for dev in self.available_devices:
+            real_path = dev['real_path']
+            if real_path not in unique_devices:
+                unique_devices[real_path] = dev
+        self.available_devices = list(unique_devices.values())
+        
+        return self.available_devices
+    
+    def get_device_info(self, device_path):
+        """Get information about a CD/DVD device"""
+        try:
+            # Get the real device path (resolve symlinks)
+            real_path = os.path.realpath(device_path)
+            
+            # Try to get device model info
+            model = "Unknown CD/DVD Drive"
+            try:
+                # Extract device name from path (e.g., sr0 from /dev/sr0)
+                device_name = os.path.basename(real_path)
+                model_file = f'/sys/block/{device_name}/device/model'
+                if os.path.exists(model_file):
+                    with open(model_file, 'r') as f:
+                        model = f.read().strip()
+            except:
+                pass
+            
+            # Check if media is present
+            has_media = self.check_media_present(device_path)
+            
+            return {
+                'device': device_path,
+                'real_path': real_path,
+                'model': model,
+                'has_media': has_media
+            }
+        except:
+            return None
+    
+    def check_media_present(self, device_path):
+        """Check if a CD is present in the device"""
+        try:
+            # Try using cdparanoia -Q to check for media
+            result = subprocess.run(['cdparanoia', '-Q', '-d', device_path], 
+                                  capture_output=True, timeout=2)
+            # If cdparanoia can read TOC, media is present
+            return 'Unable to open disc' not in result.stderr.decode()
+        except:
+            try:
+                # Fallback: try using blockdev
+                result = subprocess.run(['blockdev', '--getsize64', device_path], 
+                                      capture_output=True, timeout=1)
+                return result.returncode == 0 and int(result.stdout.strip()) > 0
+            except:
+                return False
+    
+    def set_cd_device(self, device_path):
+        """Set the active CD device"""
+        # Verify the device exists
+        if not os.path.exists(device_path):
+            return {'success': False, 'error': 'Device not found'}
+        
+        # Stop playback if currently playing
+        if self.is_playing:
+            self.stop()
+        
+        self.cd_device = device_path
+        # Clear current track info when switching devices
+        self.track_info = []
+        self.album_info = None
+        
+        return {'success': True, 'device': device_path}
         
     def get_cd_info(self):
         """Get CD track information using cdparanoia or ffmpeg"""
         tracks = []
         # Reset album info for new scan
         self.album_info = None
+        
+        # Check if we have a CD device selected
+        if not self.cd_device:
+            return {'success': False, 'error': 'No CD device selected', 'tracks': []}
         
         # First try cdparanoia which is more reliable for CD info
         try:
@@ -472,6 +586,34 @@ class CDPlayer:
             'current_track': self.current_track,
             'track_count': len(self.track_info)
         }
+    
+    def eject_cd(self):
+        """Eject the CD tray"""
+        if not self.cd_device:
+            return {'success': False, 'error': 'No CD device selected'}
+            
+        try:
+            # Stop playback first if playing
+            if self.is_playing:
+                self.stop()
+            
+            # Use eject command to open the CD tray
+            cmd = ['eject', self.cd_device]
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=5)
+            
+            if result.returncode == 0:
+                # Clear track info since CD is ejected
+                self.track_info = []
+                self.album_info = None
+                # Refresh device info to update media status
+                self.detect_cd_devices()
+                return {'success': True, 'message': 'CD ejected successfully'}
+            else:
+                return {'success': False, 'error': f'Failed to eject CD: {result.stderr}'}
+        except subprocess.TimeoutExpired:
+            return {'success': False, 'error': 'Eject command timed out'}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
 
 # Create player instance
 player = CDPlayer()
@@ -507,6 +649,30 @@ def previous_track():
 @app.route('/api/status')
 def status():
     return jsonify(player.get_status())
+
+@app.route('/api/eject', methods=['POST'])
+def eject():
+    return jsonify(player.eject_cd())
+
+@app.route('/api/devices')
+def get_devices():
+    """Get list of available CD/DVD devices"""
+    player.detect_cd_devices()  # Refresh device list
+    return jsonify({
+        'success': True,
+        'devices': player.available_devices,
+        'current_device': player.cd_device
+    })
+
+@app.route('/api/set-device', methods=['POST'])
+def set_device():
+    """Set the active CD device"""
+    data = request.json
+    if not data or not data.get('device'):
+        return jsonify({'success': False, 'error': 'No device specified'})
+    
+    result = player.set_cd_device(data['device'])
+    return jsonify(result)
 
 @app.route('/api/search-album', methods=['POST'])
 def search_album():
