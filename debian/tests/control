@@ -1,0 +1,7 @@
+Tests: basic-functionality
+Depends: @, python3-pytest, curl
+Restrictions: needs-root, allow-stderr
+
+Tests: import-test
+Depends: @, python3-all
+Restrictions: superficial

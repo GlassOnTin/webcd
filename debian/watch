@@ -1,0 +1,2 @@
+version=4
+https://github.com/GlassOnTin/webcd/releases .*/v?(\d\S+)\.tar\.gz

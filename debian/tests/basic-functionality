@@ -1,0 +1,28 @@
+#!/bin/bash
+# Basic functionality test for WebCD
+set -e
+
+echo "Testing WebCD basic functionality..."
+
+# Start WebCD in background
+cd /usr/share/webcd
+python3 app.py &
+WEBCD_PID=$!
+
+# Give it time to start
+sleep 5
+
+# Test if service is responding
+echo "Testing HTTP endpoint..."
+curl -f http://localhost:5000/ > /dev/null || (kill $WEBCD_PID; exit 1)
+
+# Test API endpoints
+echo "Testing API endpoints..."
+curl -f http://localhost:5000/api/status > /dev/null || (kill $WEBCD_PID; exit 1)
+curl -f http://localhost:5000/api/settings > /dev/null || (kill $WEBCD_PID; exit 1)
+curl -f http://localhost:5000/api/devices > /dev/null || (kill $WEBCD_PID; exit 1)
+
+# Clean up
+kill $WEBCD_PID
+
+echo "All tests passed!"

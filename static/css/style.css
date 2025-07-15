@@ -14,6 +14,188 @@ body {
     align-items: center;
 }
 
+/* Brushed Metal Texture Classes - Enhanced with Flutter-inspired techniques */
+.brushed-metal {
+    /* Base metal gradient */
+    background: 
+        /* Subtle color variations like "Brutalinium" */
+        radial-gradient(ellipse at 20% 30%, rgba(220, 38, 127, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(64, 156, 255, 0.05) 0%, transparent 50%),
+        /* Main metal gradient */
+        linear-gradient(135deg, 
+            #b8b8b8 0%, 
+            #d0d0d0 20%, 
+            #e8e8e8 40%, 
+            #f0f0f0 50%, 
+            #e8e8e8 60%, 
+            #d0d0d0 80%, 
+            #b8b8b8 100%
+        );
+    background-size: 100% 100%, 100% 100%, 8px 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        inset 0 1px 3px rgba(255, 255, 255, 0.6),
+        inset 0 -1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.brushed-metal::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    background: 
+        /* Multiple scratch layers with different densities */
+        repeating-linear-gradient(
+            87deg,
+            transparent 0px,
+            rgba(255, 255, 255, 0.03) 1px,
+            transparent 2px,
+            transparent 3px,
+            rgba(0, 0, 0, 0.03) 4px,
+            transparent 5px,
+            transparent 10px
+        ),
+        repeating-linear-gradient(
+            89deg,
+            rgba(255, 255, 255, 0.1) 0px,
+            rgba(255, 255, 255, 0.05) 0.5px,
+            transparent 1px,
+            rgba(0, 0, 0, 0.05) 1.5px,
+            rgba(0, 0, 0, 0.1) 2px,
+            transparent 2.5px,
+            transparent 4px
+        ),
+        repeating-linear-gradient(
+            91deg,
+            transparent 0px,
+            rgba(255, 255, 255, 0.05) 0.5px,
+            transparent 1px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.02) 2.5px,
+            transparent 3px,
+            transparent 6px
+        );
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+/* Additional pseudo-element for more texture depth */
+.brushed-metal::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        /* Subtle noise texture */
+        repeating-conic-gradient(
+            from 0deg at 50% 50%,
+            rgba(255, 255, 255, 0.02) 0deg,
+            transparent 1deg,
+            transparent 2deg,
+            rgba(0, 0, 0, 0.02) 3deg,
+            transparent 4deg
+        );
+    background-size: 10px 10px;
+    mix-blend-mode: soft-light;
+    pointer-events: none;
+}
+
+.brushed-metal-dark {
+    /* Dark metal base with subtle color tints */
+    background: 
+        /* Subtle purple-blue hues for alien tech feel */
+        radial-gradient(ellipse at 30% 40%, rgba(138, 43, 226, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 60%, rgba(30, 144, 255, 0.08) 0%, transparent 60%),
+        /* Main dark metal gradient */
+        linear-gradient(135deg, 
+            #4a4a4a 0%, 
+            #606060 15%, 
+            #787878 30%, 
+            #858585 45%, 
+            #909090 50%, 
+            #858585 55%, 
+            #787878 70%, 
+            #606060 85%, 
+            #4a4a4a 100%
+        );
+    background-size: 100% 100%, 100% 100%, 6px 6px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.3),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.brushed-metal-dark::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    background: 
+        /* Denser scratches for darker metal */
+        repeating-linear-gradient(
+            86deg,
+            transparent 0px,
+            rgba(255, 255, 255, 0.05) 0.5px,
+            transparent 1px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.08) 2.5px,
+            transparent 3px,
+            transparent 8px
+        ),
+        repeating-linear-gradient(
+            88deg,
+            rgba(255, 255, 255, 0.08) 0px,
+            rgba(255, 255, 255, 0.03) 0.3px,
+            transparent 0.6px,
+            rgba(0, 0, 0, 0.08) 1px,
+            rgba(0, 0, 0, 0.15) 1.3px,
+            transparent 1.6px,
+            transparent 3px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0px,
+            rgba(255, 255, 255, 0.03) 0.3px,
+            transparent 0.6px,
+            transparent 1.5px,
+            rgba(0, 0, 0, 0.05) 1.8px,
+            transparent 2.1px,
+            transparent 5px
+        );
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+.brushed-metal-dark::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        /* Grittier texture for dark metal */
+        repeating-conic-gradient(
+            from 45deg at 50% 50%,
+            rgba(255, 255, 255, 0.03) 0deg,
+            transparent 0.5deg,
+            transparent 1.5deg,
+            rgba(0, 0, 0, 0.03) 2deg,
+            transparent 2.5deg
+        );
+    background-size: 8px 8px;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
 .container {
     width: 100%;
     max-width: 800px;
@@ -39,8 +221,9 @@ h1 {
     text-align: center;
     margin-bottom: 20px;
     padding: 20px;
-    background: #0f3460;
     border-radius: 10px;
+    color: #222;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
 }
 
 .cd-info {
@@ -77,30 +260,64 @@ h1 {
     overflow-y: auto;
     margin: 20px 0;
     padding: 10px;
-    background: #0f3460;
     border-radius: 10px;
 }
 
 .track-item {
     padding: 10px 15px;
     margin: 5px 0;
-    background: #16213e;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: #222;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+    box-shadow: 
+        inset 0 1px 2px rgba(255,255,255,0.3),
+        inset 0 -1px 2px rgba(0,0,0,0.2);
 }
 
 .track-item:hover {
-    background: #1e3a5f;
     transform: translateX(5px);
+    box-shadow: 
+        0 3px 10px rgba(0,0,0,0.3),
+        inset 0 1px 3px rgba(255,255,255,0.5),
+        inset 0 -1px 3px rgba(0,0,0,0.3);
+}
+
+/* Hover state for brushed metal track items */
+.track-item.brushed-metal:hover {
+    background: 
+        radial-gradient(ellipse at 30% 50%, rgba(220, 38, 127, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 50%, rgba(64, 156, 255, 0.06) 0%, transparent 60%),
+        linear-gradient(135deg, 
+            #c8c8c8 0%, 
+            #e0e0e0 25%, 
+            #f8f8f8 50%, 
+            #e0e0e0 75%, 
+            #c8c8c8 100%
+        );
 }
 
 .track-item.active {
-    background: #e94560;
+    background: 
+        radial-gradient(ellipse at 30% 50%, rgba(233, 69, 96, 0.3) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 50%, rgba(233, 69, 96, 0.2) 0%, transparent 60%),
+        linear-gradient(135deg, 
+            #d94560 0%, 
+            #e94560 25%, 
+            #f95570 50%, 
+            #e94560 75%, 
+            #d94560 100%
+        );
     color: #fff;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+    box-shadow: 
+        0 2px 8px rgba(233, 69, 96, 0.4),
+        inset 0 1px 3px rgba(255,255,255,0.3),
+        inset 0 -1px 3px rgba(0,0,0,0.3);
 }
 
 .track-number {
@@ -112,8 +329,9 @@ h1 {
     text-align: center;
     margin: 30px 0;
     padding: 20px;
-    background: #0f3460;
     border-radius: 10px;
+    color: #222;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
 }
 
 .now-playing h3 {
@@ -145,17 +363,78 @@ h1 {
     font-size: 16px;
     cursor: pointer;
     transition: all 0.3s ease;
-    background: #0f3460;
-    color: #fff;
+    color: #222;
+    text-shadow: 1px 1px 2px rgba(255,255,255,0.3);
+    font-weight: 600;
+    box-shadow: inset 0 1px 3px rgba(255,255,255,0.3), inset 0 -1px 3px rgba(0,0,0,0.2);
 }
 
 .btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    box-shadow: 
+        0 5px 15px rgba(0,0,0,0.4), 
+        inset 0 1px 4px rgba(255,255,255,0.7),
+        inset 0 -1px 4px rgba(0,0,0,0.2);
+}
+
+/* Enhanced hover effect for brushed metal buttons */
+.btn.brushed-metal:hover::before {
+    background: 
+        /* Intensify scratches on hover */
+        repeating-linear-gradient(
+            87deg,
+            transparent 0px,
+            rgba(255, 255, 255, 0.06) 1px,
+            transparent 2px,
+            transparent 3px,
+            rgba(0, 0, 0, 0.06) 4px,
+            transparent 5px,
+            transparent 10px
+        ),
+        repeating-linear-gradient(
+            89deg,
+            rgba(255, 255, 255, 0.15) 0px,
+            rgba(255, 255, 255, 0.08) 0.5px,
+            transparent 1px,
+            rgba(0, 0, 0, 0.08) 1.5px,
+            rgba(0, 0, 0, 0.15) 2px,
+            transparent 2.5px,
+            transparent 4px
+        ),
+        repeating-linear-gradient(
+            91deg,
+            transparent 0px,
+            rgba(255, 255, 255, 0.08) 0.5px,
+            transparent 1px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.04) 2.5px,
+            transparent 3px,
+            transparent 6px
+        );
 }
 
 .btn:active {
     transform: translateY(0);
+    box-shadow: 
+        0 2px 5px rgba(0,0,0,0.3), 
+        inset 0 2px 5px rgba(0,0,0,0.4),
+        inset 0 -1px 2px rgba(255,255,255,0.2);
+}
+
+/* Active state for brushed metal */
+.btn.brushed-metal:active {
+    background: 
+        radial-gradient(ellipse at 20% 30%, rgba(220, 38, 127, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, rgba(64, 156, 255, 0.08) 0%, transparent 50%),
+        linear-gradient(135deg, 
+            #989898 0%, 
+            #b0b0b0 20%, 
+            #c8c8c8 40%, 
+            #d0d0d0 50%, 
+            #c8c8c8 60%, 
+            #b0b0b0 80%, 
+            #989898 100%
+        );
 }
 
 .btn-primary {
@@ -225,7 +504,6 @@ h1 {
 /* Settings Panel */
 .settings-panel {
     margin-top: 20px;
-    background: #0f3460;
     border-radius: 10px;
     padding: 15px;
 }
@@ -258,16 +536,17 @@ h1 {
 .setting-select {
     flex: 1;
     padding: 8px;
-    background: #0f3460;
-    color: #fff;
-    border: 1px solid #533483;
+    color: #222;
+    border: 1px solid #888;
     border-radius: 5px;
     font-size: 14px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .setting-select:focus {
     outline: none;
-    border-color: #e94560;
+    border-color: #888;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 5px rgba(136,136,136,0.5);
 }
 
 #preload-seconds {
@@ -347,16 +626,17 @@ h1 {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
-    background: #0f3460;
-    border: 1px solid #533483;
+    border: 1px solid #888;
     border-radius: 5px;
-    color: #fff;
+    color: #222;
     font-size: 16px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
 }
 
 .search-input:focus {
     outline: none;
-    border-color: #e94560;
+    border-color: #888;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 5px rgba(136,136,136,0.5);
 }
 
 .search-results {
@@ -368,15 +648,30 @@ h1 {
 .album-result {
     padding: 15px;
     margin: 10px 0;
-    background: #0f3460;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .album-result:hover {
-    background: #1e3a5f;
     transform: translateX(5px);
+    box-shadow: 
+        0 3px 12px rgba(0,0,0,0.4),
+        inset 0 1px 3px rgba(255,255,255,0.5);
+}
+
+/* Enhanced hover for brushed metal album results */
+.album-result.brushed-metal:hover {
+    background: 
+        radial-gradient(ellipse at 20% 40%, rgba(220, 38, 127, 0.08) 0%, transparent 70%),
+        radial-gradient(ellipse at 80% 60%, rgba(64, 156, 255, 0.08) 0%, transparent 70%),
+        linear-gradient(135deg, 
+            #c8c8c8 0%, 
+            #e0e0e0 20%, 
+            #f8f8f8 50%, 
+            #e0e0e0 80%, 
+            #c8c8c8 100%
+        );
 }
 
 .album-result h3 {

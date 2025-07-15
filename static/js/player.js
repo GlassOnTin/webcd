@@ -113,6 +113,16 @@ class WebCDPlayer {
         document.getElementById('album-year').textContent = yearText;
     }
     
+    // Convert MM:SS duration string to seconds
+    durationToSeconds(duration) {
+        if (!duration) return 0;
+        const parts = duration.split(':');
+        if (parts.length !== 2) return 0;
+        const minutes = parseInt(parts[0], 10) || 0;
+        const seconds = parseInt(parts[1], 10) || 0;
+        return minutes * 60 + seconds;
+    }
+    
     displayTracks() {
         const trackList = document.getElementById('track-list');
         
@@ -122,7 +132,7 @@ class WebCDPlayer {
         }
         
         trackList.innerHTML = this.tracks.map(track => `
-            <div class="track-item" data-track="${track.number}">
+            <div class="track-item brushed-metal" data-track="${track.number}">
                 <span>
                     <span class="track-number">${track.number}.</span>
                     ${track.title}
@@ -147,12 +157,37 @@ class WebCDPlayer {
         this.highlightActiveTrack();
         this.updateNowPlaying();
         
+        // Get track duration from our data
+        const track = this.tracks.find(t => t.number === trackNumber);
+        const trackDuration = track ? this.durationToSeconds(track.duration) : 0;
+        
         // Set audio source and play
         // Add timestamp to prevent caching issues
         this.audioPlayer.src = `/api/stream/${trackNumber}?t=${Date.now()}`;
         
         // Set preload for mobile
         this.audioPlayer.preload = 'none';
+        
+        // Store track duration for display
+        this.currentTrackDuration = trackDuration;
+        
+        // Add loadedmetadata listener to show duration in status
+        const showDuration = () => {
+            if (trackDuration > 0) {
+                const minutes = Math.floor(trackDuration / 60);
+                const seconds = Math.floor(trackDuration % 60);
+                const durationStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                // Add duration info to now playing display
+                const trackInfo = document.getElementById('current-track');
+                if (trackInfo && track) {
+                    trackInfo.textContent = `${track.title} (${durationStr})`;
+                }
+            }
+            this.audioPlayer.removeEventListener('loadedmetadata', showDuration);
+        };
+        this.audioPlayer.addEventListener('loadedmetadata', showDuration);
+        // Also show immediately
+        showDuration();
         
         try {
             // Add small delay for mobile browsers
@@ -402,7 +437,7 @@ class WebCDPlayer {
             
             if (data.success && data.albums.length > 0) {
                 resultsDiv.innerHTML = data.albums.map(album => `
-                    <div class="album-result" data-id="${album.id}">
+                    <div class="album-result brushed-metal" data-id="${album.id}">
                         <h3>${album.album}</h3>
                         <p>${album.artist}${album.year ? ' • ' + album.year : ''}</p>
                         <p style="font-size: 0.8em; color: #aaa;">${album.track_count} tracks</p>

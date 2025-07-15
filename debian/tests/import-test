@@ -1,0 +1,20 @@
+#!/bin/bash
+# Test Python imports
+set -e
+
+echo "Testing Python imports..."
+
+python3 -c "import flask; print('Flask import OK')"
+python3 -c "import musicbrainzngs; print('MusicBrainz import OK')"
+python3 -c "import requests; print('Requests import OK')"
+
+# Test if our app can be imported (basic syntax check)
+cd /usr/share/webcd
+python3 -c "
+import sys
+sys.path.insert(0, '.')
+exec(open('app.py').read())
+print('WebCD app syntax OK')
+"
+
+echo "Import test passed!"

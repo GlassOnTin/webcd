@@ -11,7 +11,7 @@
         <h1>WebCD Player</h1>
         
         <div class="player-card">
-            <div class="cd-status">
+            <div class="cd-status brushed-metal-dark">
                 <div id="cd-info" class="cd-info">
                     <p>No CD detected</p>
                 </div>
@@ -21,39 +21,39 @@
                     <p id="album-year"></p>
                 </div>
                 <div class="cd-controls">
-                    <button id="refresh-cd" class="btn btn-secondary">Refresh CD Info</button>
-                    <button id="search-album" class="btn btn-secondary" style="display: none;">Search Album</button>
-                    <button id="device-selector-btn" class="btn btn-secondary">Select Device</button>
+                    <button id="refresh-cd" class="btn btn-secondary brushed-metal">Refresh CD Info</button>
+                    <button id="search-album" class="btn btn-secondary brushed-metal" style="display: none;">Search Album</button>
+                    <button id="device-selector-btn" class="btn btn-secondary brushed-metal">Select Device</button>
                 </div>
             </div>
             
-            <div class="track-list" id="track-list">
+            <div class="track-list brushed-metal-dark" id="track-list">
                 <!-- Tracks will be populated here -->
             </div>
             
-            <div class="now-playing">
+            <div class="now-playing brushed-metal-dark">
                 <h3>Now Playing</h3>
                 <p id="current-track">No track selected</p>
                 <audio id="audio-player" controls></audio>
             </div>
             
             <div class="controls">
-                <button id="prev-btn" class="btn btn-control">⏮ Previous</button>
-                <button id="play-btn" class="btn btn-control btn-primary">▶ Play</button>
-                <button id="stop-btn" class="btn btn-control">⏹ Stop</button>
-                <button id="next-btn" class="btn btn-control">⏭ Next</button>
-                <button id="eject-btn" class="btn btn-control">⏏ Eject</button>
+                <button id="prev-btn" class="btn btn-control brushed-metal">⏮ Previous</button>
+                <button id="play-btn" class="btn btn-control btn-primary brushed-metal">▶ Play</button>
+                <button id="stop-btn" class="btn btn-control brushed-metal">⏹ Stop</button>
+                <button id="next-btn" class="btn btn-control brushed-metal">⏭ Next</button>
+                <button id="eject-btn" class="btn btn-control brushed-metal">⏏ Eject</button>
             </div>
         </div>
         
-        <div class="settings-panel">
-            <button id="toggle-settings" class="btn btn-secondary">⚙ Stream Settings</button>
+        <div class="settings-panel brushed-metal-dark">
+            <button id="toggle-settings" class="btn btn-secondary brushed-metal">⚙ Stream Settings</button>
             <div id="settings-content" class="settings-content" style="display: none;">
                 <h3>Stream Quality Settings</h3>
                 
                 <div class="setting-group">
                     <label for="format">Audio Format:</label>
-                    <select id="format" class="setting-select">
+                    <select id="format" class="setting-select brushed-metal">
                         <option value="mp3" selected>MP3 (Compressed)</option>
                         <option value="flac">FLAC (Lossless)</option>
                         <option value="wav">WAV (Uncompressed)</option>
@@ -62,7 +62,7 @@
                 
                 <div class="setting-group" id="bitrate-group">
                     <label for="bitrate">Bitrate (MP3 only):</label>
-                    <select id="bitrate" class="setting-select">
+                    <select id="bitrate" class="setting-select brushed-metal">
                         <option value="32k">32 kbps (Low)</option>
                         <option value="64k">64 kbps</option>
                         <option value="96k">96 kbps</option>
@@ -75,7 +75,7 @@
                 
                 <div class="setting-group">
                     <label for="buffer-size">Buffer Size:</label>
-                    <select id="buffer-size" class="setting-select">
+                    <select id="buffer-size" class="setting-select brushed-metal">
                         <option value="64k">64 KB (Low latency)</option>
                         <option value="128k">128 KB</option>
                         <option value="256k" selected>256 KB (Default)</option>
@@ -86,7 +86,7 @@
                 
                 <div class="setting-group">
                     <label for="paranoia-mode">Read Mode:</label>
-                    <select id="paranoia-mode" class="setting-select">
+                    <select id="paranoia-mode" class="setting-select brushed-metal">
                         <option value="fast" selected>Fast (May skip on errors)</option>
                         <option value="normal">Normal (Balanced)</option>
                         <option value="paranoid">Paranoid (Best quality, slow)</option>
@@ -99,7 +99,7 @@
                     <span id="preload-value">1s</span>
                 </div>
                 
-                <button id="apply-settings" class="btn btn-primary">Apply Settings</button>
+                <button id="apply-settings" class="btn btn-primary brushed-metal">Apply Settings</button>
             </div>
         </div>
         
@@ -116,8 +116,8 @@
                 <span class="close">&times;</span>
             </div>
             <div class="modal-body">
-                <input type="text" id="album-search-input" placeholder="Enter artist or album name..." class="search-input">
-                <button id="search-button" class="btn btn-primary">Search</button>
+                <input type="text" id="album-search-input" placeholder="Enter artist or album name..." class="search-input brushed-metal">
+                <button id="search-button" class="btn btn-primary brushed-metal">Search</button>
                 <div id="search-results" class="search-results"></div>
             </div>
         </div>
@@ -134,7 +134,7 @@
                 <div id="device-list" class="device-list">
                     <!-- Devices will be populated here -->
                 </div>
-                <button id="refresh-devices" class="btn btn-secondary">Refresh Device List</button>
+                <button id="refresh-devices" class="btn btn-secondary brushed-metal">Refresh Device List</button>
             </div>
         </div>
     </div>
